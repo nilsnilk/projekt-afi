@@ -17,6 +17,7 @@
   "dependencies": {
     "@mdx-js/mdx": "^1.6.22",
     "@mdx-js/react": "^1.6.22",
+    "bulma": "^0.9.3",
     "gatsby": "^3.11.1",
     "gatsby-plugin-image": "^1.11.0",
     "gatsby-plugin-mdx": "^2.11.0",
@@ -26,6 +27,7 @@
     "gatsby-transformer-sharp": "^3.11.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "sass": "^1.37.5"
+    "sass": "^1.37.5",
+    "tone": "^14.7.77"
   }
 }
