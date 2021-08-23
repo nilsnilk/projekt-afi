@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as Tone from 'tone'
-import { readOnly } from 'tone/build/esm/core/util/Interface';
 
 class Location {
 	constructor(lon, lat) {
@@ -14,15 +13,19 @@ class Location {
 
 const Compass = () => {
 	const targetLocationBox = React.createRef();
-	const synth = new Tone.MonoSynth({
-		oscillator: {
-			type: "amsine"
-		}
-	}).toDestination();
-	const loop = new Tone.Loop(time => {
-		synth.triggerAttackRelease("D4", 0.01, time);
-	},"4n").start(0);
+	
+	React.useEffect(() => {
+		const synth = new Tone.MonoSynth({
+			oscillator: {
+				type: "amsine"
+			}
+		}).toDestination();
 
+		const loop = new Tone.Loop(time => {
+			synth.triggerAttackRelease("D4", 0.01, time);
+		},"4n").start(0);	
+	});
+	
 	const getUserPosition = () => {
 		return new Promise((resolve, reject) => {
 			if(navigator.geolocation) {
@@ -70,17 +73,21 @@ const Compass = () => {
 			const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
 			const d = R * c; // in metres
-			console.log(d)
 			/* End of script */
-			if(Tone.Transport.state === "started") {
-				Tone.Transport.bpm.rampTo(getPingInterval(d), 1);
-			} else {
-				Tone.Transport.bpm.value = getPingInterval(d);
-				Tone.Transport.start();
-			}
+
+			initSound(d);
 			
 		}
 	}
+	const initSound = (distance) => {
+		if(Tone.Transport.state === "started") {
+			Tone.Transport.bpm.rampTo(getPingInterval(distance), 1);
+		} else {
+			Tone.Transport.bpm.value = getPingInterval(distance);
+			Tone.Transport.start();
+		}
+	}
+
 	const getPingInterval = (distance) => {
 		if(distance !== undefined) {
 			if(distance < 10000) {
@@ -107,7 +114,7 @@ const Compass = () => {
 						if(result.ok) {
 							result.json()
 							.then(json => {
-								if(json[0] === undefined) {
+								if(json[0] === undefined || json[0] === null) {
 									reject(new Error("API request returned nothing."));
 								} else {
 									resolve(new Location(json[0].lon, json[0].lat));
